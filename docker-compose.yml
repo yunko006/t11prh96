@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  # Backend FastAPI service
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: t11prh96-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount source code for development (comment out for production)
+      - ./backend:/app/backend
+    environment:
+      - ENV=development
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health').read()"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # Frontend React service (à configurer quand vous aurez setup React)
+  frontend:
+    image: node:20-alpine
+    container_name: t11prh96-frontend
+    working_dir: /app
+    ports:
+      - "5173:5173"  # Vite default port
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    command: sh -c "npm install && npm run dev -- --host"
+    environment:
+      - VITE_API_URL=http://backend:8000
+    depends_on:
+      - backend
+    restart: unless-stopped
+    profiles:
+      - frontend  # Frontend only starts if profile is specified
+
+  # Database (PostgreSQL example - décommentez si nécessaire)
+  # db:
+  #   image: postgres:16-alpine
+  #   container_name: t11prh96-db
+  #   environment:
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_PASSWORD: postgres
+  #     POSTGRES_DB: t11prh96
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   restart: unless-stopped
+
+  # Redis (cache - décommentez si nécessaire)
+  # redis:
+  #   image: redis:7-alpine
+  #   container_name: t11prh96-redis
+  #   ports:
+  #     - "6379:6379"
+  #   restart: unless-stopped
+
+# volumes:
+#   postgres_data:
+
+networks:
+  default:
+    name: t11prh96-network

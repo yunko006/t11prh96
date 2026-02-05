@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  # Backend FastAPI service (development mode with hot-reload)
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile.dev
+    container_name: t11prh96-backend-dev
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount entire workspace for hot-reload
+      - ./backend:/app/backend
+      - ./pyproject.toml:/app/pyproject.toml
+      - ./uv.lock:/app/uv.lock
+    environment:
+      - ENV=development
+      - PYTHONUNBUFFERED=1
+      - RELOAD=1
+    restart: unless-stopped
+
+  # Frontend React service (development mode)
+  frontend:
+    image: node:20-alpine
+    container_name: t11prh96-frontend-dev
+    working_dir: /app
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    command: sh -c "npm install && npm run dev -- --host"
+    environment:
+      - VITE_API_URL=http://localhost:8000
+    depends_on:
+      - backend
+    restart: unless-stopped
+    profiles:
+      - frontend
+
+networks:
+  default:
+    name: t11prh96-network-dev

@@ -11,7 +11,7 @@ services:
       - "8000:8000"
     volumes:
       # Mount source code for development (comment out for production)
-      - ./backend:/app/backend
+      - ./backend/app:/app/backend/app
     environment:
       - ENV=development
       - PYTHONUNBUFFERED=1

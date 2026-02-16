@@ -8,13 +8,15 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 WORKDIR /app
 
 # Copy dependency files first (better layer caching)
+# Context is the repo root, uv.lock is managed at workspace level
 COPY pyproject.toml uv.lock /app/
+COPY backend/pyproject.toml /app/backend/
 
 # Install dependencies only (not the project itself) for better layer caching
 RUN uv sync --frozen --no-dev --no-install-project
 
 # Copy application source code
-COPY app /app/app
+COPY backend/app /app/backend/app
 
 # Install the project itself
 RUN uv sync --frozen --no-dev
@@ -31,4 +33,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
     CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health').read()" || exit 1
 
 # Run FastAPI application in production mode
-CMD ["uv", "run", "fastapi", "run", "app/main.py", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uv", "run", "fastapi", "run", "backend/app/main.py", "--host", "0.0.0.0", "--port", "8000"]

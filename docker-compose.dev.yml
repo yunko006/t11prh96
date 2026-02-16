@@ -10,10 +10,8 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      # Mount entire workspace for hot-reload
-      - ./backend:/app/backend
-      - ./pyproject.toml:/app/pyproject.toml
-      - ./uv.lock:/app/uv.lock
+      # Mount source code for hot-reload
+      - ./backend/app:/app/backend/app
     environment:
       - ENV=development
       - PYTHONUNBUFFERED=1

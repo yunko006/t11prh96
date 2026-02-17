@@ -1,0 +1,22 @@
+{
+  "about": {
+    "nom": "prh",
+    "prenom": "tom",
+    "age": null,
+    "avatar": null,
+    "role": "backend dev",
+    "description": "bonjour ceci est un test de desc"
+  },
+  "projects": [
+    {
+      "id": 1,
+      "name": "t11prh96",
+      "description": "Mon portfolio backend FastAPI"
+    },
+    {
+      "id": 2,
+      "name": "projet-deux",
+      "description": "Un deuxième projet exemple"
+    }
+  ]
+}

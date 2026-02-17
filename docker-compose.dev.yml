@@ -12,6 +12,7 @@ services:
     volumes:
       # Mount source code for hot-reload
       - ./backend/app:/app/backend/app
+      - ./backend/data:/app/data
     environment:
       - ENV=development
       - PYTHONUNBUFFERED=1
